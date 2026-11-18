@@ -85,6 +85,47 @@
   function fanfare() { beep(660, 160); setTimeout(function () { beep(880, 160); }, 170); setTimeout(function () { beep(1100, 320); }, 340); }
   ['click', 'keydown', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, audio, { passive: true }); });
 
+  // ---------- muzika: tiho na početnom ekranu, glasnije dok traje trening ----------
+  var Music = (function () {
+    var QUIET = 0.15, LOUD = 0.7;
+    var a = null, target = QUIET, started = false, blocked = false, missing = false, timer = null;
+    function hint(show) { var h = $('music-hint'); if (h) h.classList.toggle('hidden', !show); }
+    function el() {
+      if (a || missing) return a;
+      a = document.createElement('audio');
+      a.loop = true; a.preload = 'auto'; a.volume = 0;
+      ['workout-music-mala.mp3', 'workout-music.mp3'].forEach(function (src) {
+        var s = document.createElement('source'); s.src = src; s.type = 'audio/mpeg'; a.appendChild(s);
+      });
+      a.lastChild.addEventListener('error', function () { missing = true; a = null; hint(false); });
+      document.body.appendChild(a);
+      return a;
+    }
+    function ramp() {
+      clearInterval(timer);
+      timer = setInterval(function () {
+        if (!a) { clearInterval(timer); return; }
+        var v = a.volume, d = target - v;
+        if (Math.abs(d) <= 0.02) { a.volume = target; clearInterval(timer); return; }
+        a.volume = Math.max(0, Math.min(1, v + (d > 0 ? 0.02 : -0.02)));
+      }, 60);
+    }
+    function play() {
+      var x = el(); if (!x) return;
+      var p;
+      try { p = x.play(); } catch (e) { blocked = true; hint(true); return; }
+      if (p && p.then) p.then(function () { started = true; blocked = false; hint(false); ramp(); }).catch(function () { blocked = true; hint(true); });
+      else { started = true; ramp(); }
+    }
+    return {
+      set: function (level) { target = level === 'loud' ? LOUD : QUIET; if (!started) play(); else ramp(); },
+      unlock: function () { if (!started && !missing) play(); },
+      waiting: function () { return blocked && !started && !missing; }
+    };
+  })();
+  document.addEventListener('click', function () { Music.unlock(); }, true);
+  document.addEventListener('touchstart', function () { Music.unlock(); }, { passive: true, capture: true });
+
   // ---------- ekran ne smije zaspati ----------
   function keepAwake() {
     try { if (navigator.wakeLock && !wakeLock) navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; l.addEventListener('release', function () { wakeLock = null; }); }).catch(function () {}); } catch (e) { /* nema */ }
@@ -228,6 +269,7 @@
     Promise.resolve(P.makePlan(data, P.dayKey())).then(function (plan) {
       S.starting = false;
       if (TEST) { plan.items.forEach(function (it) { it.dur = 8; }); plan.rest = 4; }
+      Music.set('loud');
       S.plan = plan; S.i = 0; S.skippedIdx = {}; S.doneIdx = {}; S.extraRest = 0; S.activeSec = 0; S.result = null; S.paused = false; S.finishing = false;
       $('pause').classList.add('hidden');
       keepAwake();
@@ -341,6 +383,7 @@
   function setPaused(p) {
     if (S.screen !== 'ex' && S.screen !== 'rest') return;
     S.paused = p;
+    Music.set(p ? 'quiet' : 'loud');
     $('pause').classList.toggle('hidden', !p);
     if (p) { likMain.pause(); likNext.pause(); }
     else if (S.screen === 'ex') likMain.play();
@@ -372,6 +415,7 @@
 
   function showDone(res) {
     S.result = res;
+    Music.set('quiet');
     $('done-title').textContent = res.counts ? 'Bravo! Trening završen.' : 'Danas je bilo kraće. Sutra novi pokušaj!';
     $('done-check').classList.toggle('soft', !res.counts);
     $('done-time').textContent = fmt(res.seconds);
@@ -396,6 +440,7 @@
 
   function goHome() {
     clearTimeout(homeTimer);
+    Music.set('quiet');
     S.phase = null; S.paused = false; S.plan = S.plan || null;
     $('pause').classList.add('hidden');
     if (likMain) likMain.pause();
@@ -462,6 +507,11 @@
   // ---------- daljinski TV-a (tastatura) ----------
   document.addEventListener('keydown', function (e) {
     var k = e.key, code = e.keyCode;
+    if (Music.waiting()) {
+      // prvi pritisak na daljinskom samo pusti muziku (TV ne da zvuk bez pritiska)
+      Music.unlock();
+      if (S.screen === 'home') { e.preventDefault(); return; }
+    }
     var ok = k === 'Enter' || k === ' ' || code === 13 || k === 'MediaPlayPause' || code === 179 || code === 415 || code === 19;
     if (ok) {
       if (S.screen === 'home' && document.activeElement && document.activeElement.tagName === 'BUTTON') return; // dugme samo radi
@@ -490,6 +540,7 @@
   likMain = new window.LikPlayer($('lik-main'), { showCue: true, ex: 'ruke', kg: 100 });
   likNext = new window.LikPlayer($('lik-next'), { showCue: false, ex: 'marsiranje', kg: 100 });
   show('home');
+  Music.set('quiet');
   if (TEST) toast('Probni način: vježbe traju 8 s i ne upisuju se');
   loadSummary();
   setupRoom();

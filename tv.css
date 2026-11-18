@@ -56,6 +56,9 @@ button { font-family: inherit; }
 .pulse { animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 
+.music-hint { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; color: var(--muted); }
+.music-hint svg { width: 22px; height: 22px; color: var(--green); }
+
 /* ---------- VJEŽBA ---------- */
 #s-ex.active, #s-rest.active { flex-direction: column; }
 .bar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; padding: 26px 48px 18px 48px; }
