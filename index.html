@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="bs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trening za tatu</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tv.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-flame" viewBox="0 0 24 24"><path fill="none" stroke="#FB923C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M12 22c4 0 7-2.8 7-7 0-3.5-2.5-6-4-8-.5 2-1.5 3-3 3 0-3-1-6-4-8 0 4-3 6.5-3 11 0 4.6 3 9 7 9z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><g fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1.2"/><rect x="14" y="4.5" width="4" height="15" rx="1.2"/></g></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></g></symbol>
+</svg>
+
+<div id="stage">
+
+  <!-- 1. POČETAK + QR -->
+  <section id="s-home" class="screen active" aria-label="Početni ekran">
+    <div class="home-left">
+      <div class="home-top">
+        <div class="greet" id="greet">Dobar dan!</div>
+        <h1 class="home-title" id="home-title">Spreman za današnji trening?</h1>
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="streak-card">
+        <div class="streak-row">
+          <svg class="flame-lg" aria-hidden="true"><use href="#i-flame"/></svg>
+          <div class="streak-num" id="home-streak">0</div>
+          <div class="streak-lbl">dana zaredom<br><span class="muted" id="home-record">Rekord: 0</span></div>
+        </div>
+        <div class="week" id="home-week"></div>
+      </div>
+      <div class="tv-actions">
+        <button type="button" class="tv-btn" id="btn-start">Pokreni bez telefona</button>
+        <button type="button" class="tv-btn ghost" id="btn-fs">Cijeli ekran</button>
+      </div>
+    </div>
+    <div class="qr-card">
+      <div class="qr-title">Skeniraj kamerom telefona</div>
+      <div class="qr" id="qr"></div>
+      <div class="qr-alt">ili na telefonu otvori <b id="short-url">…</b><br>i upiši kod</div>
+      <div class="code" id="code">····</div>
+      <div class="status" id="phone-status"><span class="dot pulse"></span><span id="phone-status-text">Čekam telefon…</span></div>
+    </div>
+  </section>
+
+  <!-- 2. VJEŽBA -->
+  <section id="s-ex" class="screen" aria-label="Vježba u toku">
+    <header class="bar">
+      <div class="bar-left">
+        <div class="lbl">VJEŽBA</div>
+        <div class="count"><span id="ex-i">1</span> <span class="muted">od <span id="ex-n">8</span></span></div>
+        <div class="segs" id="ex-segs"></div>
+      </div>
+      <div class="bar-mid">
+        <div class="lbl">JOŠ</div>
+        <div class="timer" id="ex-timer">0:30</div>
+      </div>
+      <div class="bar-right">
+        <div class="pill rest-pill"><svg aria-hidden="true"><use href="#i-clock"/></svg><span id="ex-restinfo">Zatim odmor 25 s</span></div>
+        <div class="streak-mini"><svg aria-hidden="true"><use href="#i-flame"/></svg><span id="ex-streak">0 dana zaredom</span></div>
+      </div>
+    </header>
+    <div class="panel">
+      <div class="side-l">
+        <div class="lbl">DIO TRENINGA</div>
+        <div class="tag" id="ex-tag">Zagrijavanje</div>
+      </div>
+      <div class="lik-box" id="lik-main"></div>
+      <div class="side-r">
+        <div class="lbl">NIVO</div>
+        <div class="big" id="ex-level">1</div>
+        <div class="muted side-sub" id="ex-levelname">Početak</div>
+      </div>
+    </div>
+    <footer class="foot">
+      <div class="foot-text">
+        <div class="ex-name" id="ex-name">…</div>
+        <div class="ex-how" id="ex-how"></div>
+      </div>
+      <div class="next-card">
+        <div class="lbl">SLJEDEĆE</div>
+        <div class="next-txt" id="ex-next">…</div>
+      </div>
+    </footer>
+    <div class="progress"><div id="ex-progress"></div></div>
+  </section>
+
+  <!-- 3. ODMOR / PRIPREMA -->
+  <section id="s-rest" class="screen" aria-label="Odmor">
+    <header class="bar bar-rest">
+      <div class="bar-left">
+        <div class="lbl" id="rest-done-lbl">ZAVRŠENO</div>
+        <div class="count"><span id="rest-i">0</span> <span class="muted">od <span id="rest-n">8</span></span></div>
+        <div class="segs" id="rest-segs"></div>
+      </div>
+      <div class="streak-mini"><svg aria-hidden="true"><use href="#i-flame"/></svg><span id="rest-streak">0 dana zaredom</span></div>
+    </header>
+    <div class="rest-panel">
+      <div class="rest-left">
+        <div class="rest-title" id="rest-title">ODMOR</div>
+        <div class="rest-text" id="rest-text">Popij gutljaj vode<br>i diši polako.</div>
+      </div>
+      <div class="ring">
+        <svg viewBox="0 0 340 340" aria-hidden="true">
+          <circle class="breathe" cx="170" cy="170" r="122"/>
+          <circle class="ring-bg" cx="170" cy="170" r="150"/>
+          <circle class="ring-fg" id="ring-fg" cx="170" cy="170" r="150" transform="rotate(-90 170 170)"/>
+        </svg>
+        <div class="ring-num"><div class="ring-time" id="rest-timer">0:20</div><div class="ring-sub" id="rest-sub">sekundi</div></div>
+      </div>
+      <div class="next-box">
+        <div class="lbl">SLJEDEĆE</div>
+        <div class="lik-next" id="lik-next"></div>
+        <div class="next-name" id="rest-next">…</div>
+        <div class="muted next-dur" id="rest-next-dur"></div>
+      </div>
+    </div>
+    <div class="rest-hint" id="rest-hint"><svg aria-hidden="true"><use href="#i-phone"/></svg><span>Treba ti više vremena? Na telefonu pritisni „+15 s”.</span></div>
+  </section>
+
+  <!-- 4. KRAJ -->
+  <section id="s-done" class="screen" aria-label="Kraj treninga">
+    <div class="done-head">
+      <div class="done-check" id="done-check"><svg aria-hidden="true"><use href="#i-check"/></svg></div>
+      <h1 class="done-title" id="done-title">Bravo! Trening završen.</h1>
+    </div>
+    <div class="level-banner hidden" id="level-banner"></div>
+    <div class="stats">
+      <div class="stat"><div class="lbl">VRIJEME</div><div class="stat-num" id="done-time">0:00</div><div class="muted">minuta</div></div>
+      <div class="stat"><div class="lbl">VJEŽBE</div><div class="stat-num" id="done-ex">0 / 0</div><div class="muted" id="done-ex-sub">urađeno</div></div>
+      <div class="stat stat-streak">
+        <div class="stat-top"><div class="lbl lbl-orange">STREAK</div><div class="record-pill hidden" id="done-record">Novi rekord!</div></div>
+        <div class="stat-flame"><svg aria-hidden="true"><use href="#i-flame"/></svg><div class="stat-num" id="done-streak">0</div></div>
+        <div class="orange-sub">dana zaredom</div>
+      </div>
+    </div>
+    <div class="week week-lg" id="done-week"></div>
+    <div class="done-foot">
+      <div class="muted done-bye">Vidimo se sutra.</div>
+      <button type="button" class="tv-btn ghost" id="btn-home">Na početak</button>
+    </div>
+  </section>
+
+  <div class="pause hidden" id="pause" role="status">
+    <div class="pause-box">
+      <svg aria-hidden="true"><use href="#i-pause"/></svg>
+      <div class="pause-title">PAUZA</div>
+      <div class="pause-sub">Nastavi kad budeš spreman — dugme „Nastavi” na telefonu.</div>
+    </div>
+  </div>
+  <div class="toast hidden" id="toast" role="status"></div>
+</div>
+
+<script src="qr.js"></script>
+<script src="program.js"></script>
+<script src="net.js"></script>
+<script src="lik.js"></script>
+<script src="tv.js"></script>
+</body>
+</html>

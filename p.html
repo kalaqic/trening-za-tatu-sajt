@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="bs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F1419">
+<title>Trening za tatu — daljinski</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="phone.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-flame" viewBox="0 0 24 24"><path fill="none" stroke="#FB923C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M12 22c4 0 7-2.8 7-7 0-3.5-2.5-6-4-8-.5 2-1.5 3-3 3 0-3-1-6-4-8 0 4-3 6.5-3 11 0 4.6 3 9 7 9z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><g fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1.2"/><rect x="14" y="4.5" width="4" height="15" rx="1.2"/></g></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M5 12h14"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M5 12h14M12 5v14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+</svg>
+
+<main class="app">
+  <div class="conn" id="conn"><span class="cdot"></span><span id="conn-text">Povezujem…</span><span class="conn-streak hidden" id="conn-streak"><svg aria-hidden="true"><use href="#i-flame"/></svg><span id="conn-streak-n">0</span></span></div>
+
+  <!-- Unos koda -->
+  <section class="view hidden" id="v-code">
+    <h1>Poveži se sa TV-om</h1>
+    <p class="sub">Upiši kod od 6 brojeva koji piše na TV-u.</p>
+    <form id="code-form" class="code-form">
+      <label for="code-input" class="sr">Kod sa TV-a</label>
+      <input id="code-input" inputmode="numeric" pattern="[0-9]*" maxlength="7" autocomplete="off" placeholder="000000">
+      <button type="submit" class="btn primary">Poveži</button>
+    </form>
+    <p class="err hidden" id="code-err"></p>
+  </section>
+
+  <!-- Početna: vaganje + start -->
+  <section class="view hidden" id="v-home">
+    <div>
+      <h1 id="hello">Dobro jutro!</h1>
+      <p class="sub">Koliko si danas na vagi?</p>
+    </div>
+    <div class="card weigh">
+      <div class="weigh-row">
+        <button type="button" class="round" id="kg-minus" aria-label="Smanji za pola kile"><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
+        <div class="kg-wrap">
+          <label for="kg-input" class="sr">Kilaža u kilogramima</label>
+          <input id="kg-input" inputmode="decimal" autocomplete="off" value="100,0">
+          <span class="kg-unit">kg</span>
+        </div>
+        <button type="button" class="round" id="kg-plus" aria-label="Povećaj za pola kile"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+      </div>
+      <div class="delta" id="kg-delta"></div>
+    </div>
+    <div class="lik-row">
+      <div class="lik-thumb" id="lik-thumb"></div>
+      <p>Ovako te vidi trening na TV-u. Što manje kila, to je i lik mršaviji.</p>
+    </div>
+    <div class="card today">
+      <div class="lbl">DANAS TE ČEKA</div>
+      <div class="today-main" id="today-main">…</div>
+      <div class="today-sub" id="today-sub"></div>
+    </div>
+    <div class="bottom">
+      <p class="warn hidden" id="tv-off">TV nije uključen. Otvori trening na TV-u pa pokušaj ponovo.</p>
+      <button type="button" class="btn primary big" id="btn-go"><svg aria-hidden="true"><use href="#i-play"/></svg><span>Spremi i pokreni na TV-u</span></button>
+      <button type="button" class="btn link" id="btn-noweigh">Danas se ne mogu izvagati — samo pokreni</button>
+    </div>
+  </section>
+
+  <!-- Daljinski -->
+  <section class="view hidden" id="v-remote">
+    <div class="card now">
+      <div class="lbl" id="r-phase">VJEŽBA 1 OD 8</div>
+      <div class="now-name" id="r-name">…</div>
+      <div class="now-row">
+        <div class="now-timer" id="r-timer">0:00</div>
+        <div class="now-sub" id="r-sub"></div>
+      </div>
+      <div class="bar"><div id="r-bar"></div></div>
+    </div>
+    <div class="center">
+      <button type="button" class="pp" id="btn-pp" aria-label="Pauza"><svg aria-hidden="true"><use href="#i-pause" id="pp-icon"/></svg></button>
+      <div class="pp-label" id="pp-label">Pauza</div>
+    </div>
+    <div class="grid2">
+      <button type="button" class="btn tile" id="btn-prev"><svg aria-hidden="true"><use href="#i-left"/></svg>Nazad</button>
+      <button type="button" class="btn tile" id="btn-next">Dalje<svg aria-hidden="true"><use href="#i-right"/></svg></button>
+      <button type="button" class="btn tile amber" id="btn-add">+15 s odmora</button>
+      <button type="button" class="btn tile" id="btn-skip">Preskoči odmor</button>
+    </div>
+    <button type="button" class="btn danger" id="btn-end">Završi trening</button>
+  </section>
+
+  <!-- Kraj -->
+  <section class="view hidden" id="v-done">
+    <div class="done-check" id="d-check"><svg aria-hidden="true"><use href="#i-check"/></svg></div>
+    <h1 id="d-title">Bravo!</h1>
+    <div class="card done-card">
+      <div class="done-streak"><svg aria-hidden="true"><use href="#i-flame"/></svg><span id="d-streak">0</span></div>
+      <div class="sub">dana zaredom</div>
+      <div class="pill hidden" id="d-record">Novi rekord!</div>
+      <div class="sub" id="d-level"></div>
+    </div>
+    <p class="sub center-text">Vidimo se sutra.</p>
+    <button type="button" class="btn ghost" id="btn-home">Nazad na početak</button>
+  </section>
+
+  <!-- Potvrda za kraj -->
+  <div class="sheet hidden" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-box">
+      <h2 id="sheet-title">Završiti trening sada?</h2>
+      <p class="sub">Ako uradiš bar 3/4 vježbi, dan se i dalje računa.</p>
+      <button type="button" class="btn primary" id="sheet-no">Ne, nastavljam</button>
+      <button type="button" class="btn danger" id="sheet-yes">Da, završi</button>
+    </div>
+  </div>
+</main>
+
+<script src="net.js"></script>
+<script src="lik.js"></script>
+<script src="phone.js"></script>
+</body>
+</html>

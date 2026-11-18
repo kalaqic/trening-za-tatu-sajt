@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="bs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sve vježbe — pregled animacija</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #0F1419; --panel: #161D25; --line: #2A323D; --text: #F4F1EA; --muted: #A8B0BC; --soft: #C9CFD8; --green: #4ADE80; --green-soft: #86EFAC; --green-bg: #12261A; --head: 'Space Grotesk', Inter, system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+button, select { font-family: inherit; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 40px 20px 64px; display: flex; flex-direction: column; gap: 28px; }
+.eyebrow { font-size: 14px; font-weight: 600; letter-spacing: .12em; color: var(--muted); }
+h1 { margin: 6px 0 8px; font-family: var(--head); font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h2 { margin: 0; font-family: var(--head); font-size: 28px; }
+p { margin: 0; }
+.sub { font-size: 18px; color: var(--soft); }
+.row { display: flex; flex-wrap: wrap; gap: 16px; align-items: stretch; }
+.box { padding: 20px; border-radius: 20px; background: var(--panel); }
+.slider { flex: 1 1 360px; display: flex; flex-direction: column; gap: 12px; }
+.slider label { font-size: 16px; font-weight: 600; color: var(--soft); }
+.slider label b { color: var(--text); }
+input[type=range] { width: 100%; accent-color: var(--green); height: 32px; }
+.ticks { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); gap: 8px; flex-wrap: wrap; }
+.btns { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.btn { min-height: 52px; padding: 0 22px; border-radius: 16px; border: 2px solid var(--line); background: var(--panel); color: var(--text); font-size: 17px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
+.btn.primary { background: var(--green); border-color: var(--green); color: var(--bg); font-weight: 700; }
+.btn.light { background: var(--text); border-color: var(--text); color: var(--bg); font-weight: 700; }
+.btn.danger { background: transparent; border-color: #5B2A2A; color: #FCA5A5; }
+.btn svg { width: 20px; height: 20px; }
+.btn:focus-visible, select:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+.rules { background: var(--green-bg); color: #D1FAE5; display: flex; flex-direction: column; gap: 8px; }
+.rules h3 { margin: 0 0 4px; font-size: 18px; color: var(--green-soft); }
+.rules p { font-size: 16px; line-height: 1.5; }
+.level { display: flex; flex-direction: column; gap: 16px; }
+.level-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; border-bottom: 2px solid #1E2630; padding-bottom: 10px; }
+.level-head .now { padding: 4px 12px; border-radius: 999px; background: var(--green-bg); color: var(--green-soft); font-size: 14px; font-weight: 700; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.card { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px; background: var(--panel); }
+.meta { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; color: var(--muted); }
+.stage { border-radius: 14px; background: var(--bg); padding: 6px 10px 8px; }
+.lik-cue { font-size: 15px; font-weight: 700; text-align: center; min-height: 19px; }
+.lik-cue.lik-cue-a { color: var(--green); }
+.name { font-size: 19px; font-weight: 700; line-height: 1.25; }
+.how { font-size: 15px; line-height: 1.4; color: var(--muted); flex-grow: 1; }
+.admin { display: flex; flex-direction: column; gap: 14px; }
+.admin h3 { margin: 0; font-size: 18px; }
+select { min-height: 52px; border-radius: 14px; border: 2px solid var(--line); background: var(--bg); color: var(--text); font-size: 17px; padding: 0 12px; }
+.note { font-size: 15px; color: var(--muted); }
+#tv-code { min-height: 52px; width: 150px; border-radius: 14px; border: 2px solid var(--line); background: var(--bg); color: var(--text); font-size: 20px; text-align: center; letter-spacing: .15em; }
+.btn:disabled { opacity: .4; cursor: default; }
+.hidden { display: none !important; }
+.confirm { border: 2px solid #5B2A2A; display: flex; flex-direction: column; gap: 12px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><g fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1.2"/><rect x="14" y="4.5" width="4" height="15" rx="1.2"/></g></symbol>
+</svg>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">SAMO ZA TEBE · TATA OVO NE VIDI</div>
+    <h1>Sve vježbe, od najlakše do najteže</h1>
+    <p class="sub">16 vježbi u 5 nivoa. Pritisni „Pusti” ispod vježbe da vidiš animaciju. Blijedi zeleni obris je položaj do kojeg treba doći.</p>
+  </header>
+
+  <div class="row">
+    <div class="box slider">
+      <label for="kg">Kilaža lika za pregled: <b id="kg-txt">104 kg</b></label>
+      <input id="kg" type="range" min="65" max="120" step="0.5" value="104">
+      <div class="ticks"><span>70 kg · mršav</span><span>80 kg · normalan</span><span>100 kg · debeo</span><span>110+ kg</span></div>
+    </div>
+    <div class="btns">
+      <button type="button" class="btn primary" id="all-play">Pusti sve</button>
+      <button type="button" class="btn" id="all-stop">Zaustavi sve</button>
+    </div>
+  </div>
+
+  <div class="box rules" id="rules"></div>
+  <div id="levels"></div>
+
+  <section class="box admin" aria-labelledby="admin-h">
+    <h3 id="admin-h">Podešavanja za tebe</h3>
+    <div class="btns">
+      <a class="btn" href="index.html">Otvori TV ekran</a>
+      <a class="btn" href="index.html?test=1">Brza proba TV-a (vježbe po 8 s, ništa se ne upisuje)</a>
+    </div>
+    <p class="note">Podaci (kilaže, streak, nivo) čuvaju se na TV-u, a kopija na tatinom telefonu. Za promjenu nivoa poveži se sa TV-om kodom sa TV ekrana:</p>
+    <form class="btns" id="tv-form">
+      <label for="tv-code" class="note">Kod TV-a:</label>
+      <input id="tv-code" inputmode="numeric" maxlength="7" placeholder="000000" autocomplete="off">
+      <button type="submit" class="btn">Poveži</button>
+      <span class="note" id="tv-status">Nije povezano</span>
+    </form>
+    <div class="btns">
+      <label for="lvl" class="note">Nivo:</label>
+      <select id="lvl"><option value="1">Nivo 1</option><option value="2">Nivo 2</option><option value="3">Nivo 3</option><option value="4">Nivo 4</option><option value="5">Nivo 5</option></select>
+      <button type="button" class="btn" id="lvl-set" disabled>Postavi nivo</button>
+      <button type="button" class="btn danger" id="reset" disabled>Obriši sve podatke</button>
+    </div>
+    <div class="box confirm hidden" id="confirm">
+      <p>Obrisati sve podatke na TV-u (kilaže, treninge, streak, nivo)? Ovo se ne može vratiti.</p>
+      <div class="btns"><button type="button" class="btn" id="confirm-no">Ne</button><button type="button" class="btn danger" id="confirm-yes">Da, obriši</button></div>
+    </div>
+    <p class="note" id="admin-msg">Ručna promjena nivoa poništava brojanje do sljedećeg nivoa.</p>
+  </section>
+</main>
+<script src="program.js"></script>
+<script src="net.js"></script>
+<script src="lik.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var players = [];
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  function setBtn(p) {
+    p.btn.classList.toggle('primary', !p.player.playing);
+    p.btn.classList.toggle('light', p.player.playing);
+    p.btn.innerHTML = '<svg aria-hidden="true"><use href="#' + (p.player.playing ? 'i-pause' : 'i-play') + '"/></svg>' + (p.player.playing ? 'Zaustavi' : 'Pusti');
+  }
+
+  Promise.resolve({ levels: window.Program.LEVELS, exercises: window.Program.EXERCISES, rules: window.Program.RULES, level: 0 }).then(function (d) {
+    var R = d.rules;
+    $('rules').innerHTML = '<h3>Kako program sam napreduje</h3>' +
+      '<p>Počinje na Nivou 1. Svaki trening ima 8 vježbi: zagrijavanje, glavni dio sa njegovog nivoa, jednu novu vježbu sa sljedećeg nivoa (samo 20 s, da proba) i smirivanje.</p>' +
+      '<p>Unutar nivoa vježbe se produžavaju: ' + R.mainDur.join(' → ') + ' sekundi.</p>' +
+      '<p>Nakon ' + R.cleanToLevelUp + ' čistih treninga (do kraja, bez preskakanja i bez „+15 s”) prelazi na sljedeći nivo.</p>' +
+      '<p>Preskočena vježba se ne pojavljuje ' + R.skipBlockSessions + ' treninga. Ako ' + R.abortsToLevelDown + ' treninga zaredom prekine prije kraja, vraća se nivo nazad. Ako je tražio „+15 s” bar dva puta, sljedeći put odmor je 5 s duži.</p>' +
+      '<p>Streak: dan se računa kad uradi bar ' + Math.round(R.countsAsDone * 100) + '% vježbi. ' + R.graceDaysPerWeek + ' slobodan dan sedmično ne prekida niz.</p>';
+    var html = '';
+    d.levels.forEach(function (L) {
+      html += '<section class="level"><div class="level-head"><h2>Nivo ' + L.n + ' — ' + esc(L.name) + '</h2><span class="sub">' + esc(L.desc) + '</span>' + '' + '</div><div class="grid">';
+      d.exercises.forEach(function (e, idx) {
+        if (e.level !== L.n) return;
+        html += '<article class="card"><div class="meta"><span>#' + (idx + 1) + '</span><span>Nivo ' + e.level + '</span></div>' +
+          '<div class="stage" data-ex="' + esc(e.id) + '"></div>' +
+          '<div class="name">' + esc(e.name) + '</div><div class="how">' + esc(e.how) + '</div>' +
+          '<button type="button" class="btn primary" data-play="' + esc(e.id) + '"></button></article>';
+      });
+      html += '</div></section>';
+    });
+    $('levels').innerHTML = html;
+    $('levels').style.display = 'flex'; $('levels').style.flexDirection = 'column'; $('levels').style.gap = '32px';
+    document.querySelectorAll('.stage').forEach(function (el) {
+      var id = el.getAttribute('data-ex');
+      var p = { id: id, player: new window.LikPlayer(el, { ex: id, kg: Number($('kg').value), showCue: true }), btn: document.querySelector('[data-play="' + id + '"]') };
+      players.push(p);
+      setBtn(p);
+      p.btn.addEventListener('click', function () { if (p.player.playing) p.player.pause(); else p.player.play(); setBtn(p); });
+    });
+  });
+
+  $('kg').addEventListener('input', function () {
+    var v = Number(this.value);
+    $('kg-txt').textContent = String(v).replace('.', ',') + ' kg';
+    players.forEach(function (p) { p.player.setWeight(v); });
+  });
+  $('all-play').addEventListener('click', function () { players.forEach(function (p) { p.player.play(); setBtn(p); }); });
+  $('all-stop').addEventListener('click', function () { players.forEach(function (p) { p.player.stop(); setBtn(p); }); });
+  var net = null;
+  var saved = window.Net.lsGet('tata-room') || window.Net.lsGet('tata-tv-code');
+  if (saved) $('tv-code').value = saved;
+  function setEnabled(on) { $('lvl-set').disabled = !on; $('reset').disabled = !on; }
+  $('tv-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var c = $('tv-code').value.replace(/\D/g, '');
+    if (c.length !== 6) { $('tv-status').textContent = 'Kod ima 6 brojeva'; return; }
+    if (net) { location.hash = ''; }
+    $('tv-status').textContent = 'Povezujem…';
+    net = window.Net.client(c, {
+      onOpenChange: function (open) { setEnabled(open); $('tv-status').textContent = open ? 'Povezano sa TV-om' : 'Tražim TV… (mora biti otvoren)'; },
+      onOpen: function () { net.send({ t: 'getSummary' }); },
+      onMsg: function (m) { if (m.t === 'summary' && m.summary) { $('lvl').value = String(m.summary.level); $('admin-msg').textContent = 'Tata je na Nivou ' + m.summary.level + ', streak ' + m.summary.streak + '.'; } }
+    });
+  });
+  $('lvl-set').addEventListener('click', function () {
+    if (net && net.send({ t: 'admin', action: 'level', level: Number($('lvl').value) })) $('admin-msg').textContent = 'Postavljeno: Nivo ' + $('lvl').value + '. TV se sam osvježio.';
+  });
+  $('reset').addEventListener('click', function () { $('confirm').classList.remove('hidden'); });
+  $('confirm-no').addEventListener('click', function () { $('confirm').classList.add('hidden'); });
+  $('confirm-yes').addEventListener('click', function () {
+    $('confirm').classList.add('hidden');
+    if (net && net.send({ t: 'admin', action: 'reset' })) { $('admin-msg').textContent = 'Sve obrisano. Kreće ispočetka od Nivoa 1.'; $('lvl').value = '1'; }
+  });
+})();
+</script>
+</body>
+</html>
