@@ -33,11 +33,34 @@
   }
 
   // ---------- skaliranje na veličinu TV-a ----------
+  // TV-i često odsijeku rubove slike (overscan), pa ostavljamo sigurnosni okvir.
+  // Veličina se mijenja sa ?okvir=90 (posto ekrana) i pamti se na TV-u.
+  var SAFE = (function () {
+    var q = parseInt(params.get('okvir'), 10);
+    if (q >= 70 && q <= 100) { window.Net.lsSet('tata-okvir', String(q)); return q / 100; }
+    var saved = parseInt(window.Net.lsGet('tata-okvir'), 10);
+    return saved >= 70 && saved <= 100 ? saved / 100 : 0.94;
+  })();
   function fit() {
-    var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
-    $('stage').style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+    var vv = window.visualViewport;
+    var de = document.documentElement;
+    var w = (vv && vv.width) || de.clientWidth || window.innerWidth;
+    var h = (vv && vv.height) || de.clientHeight || window.innerHeight;
+    var s = Math.min(w / 1280, h / 720) * SAFE;
+    var x = (w - 1280 * s) / 2 + (vv ? vv.offsetLeft : 0);
+    var y = (h - 720 * s) / 2 + (vv ? vv.offsetTop : 0);
+    $('stage').style.transform = 'translate(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
+    if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
   }
   window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', fit);
+  window.addEventListener('load', fit);
+  if (window.visualViewport) { window.visualViewport.addEventListener('resize', fit); window.visualViewport.addEventListener('scroll', fit); }
+  // neki TV browseri sami pomjere stranicu (npr. kad dugme dobije fokus) — vrati je nazad
+  window.addEventListener('scroll', function () { if (window.scrollX || window.scrollY) window.scrollTo(0, 0); });
+  document.addEventListener('scroll', function () { document.documentElement.scrollLeft = 0; document.documentElement.scrollTop = 0; document.body.scrollLeft = 0; document.body.scrollTop = 0; }, true);
+  setInterval(fit, 2000);
+  function focusNoScroll(el) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } fit(); }
 
   // ---------- zvuk ----------
   var actx = null;
@@ -72,8 +95,8 @@
   function show(name) {
     S.screen = name;
     ['home', 'ex', 'rest', 'done'].forEach(function (n) { $('s-' + n).classList.toggle('active', n === name); });
-    if (name === 'home') setTimeout(function () { $('btn-start').focus(); }, 50);
-    if (name === 'done') setTimeout(function () { $('btn-home').focus(); }, 50);
+    if (name === 'home') setTimeout(function () { focusNoScroll($('btn-start')); }, 50);
+    if (name === 'done') setTimeout(function () { focusNoScroll($('btn-home')); }, 50);
   }
 
   function renderWeek(el, week) {

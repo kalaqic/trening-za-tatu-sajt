@@ -5,13 +5,14 @@
   --head: 'Space Grotesk', 'Inter', system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
+html, body { margin: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; overflow: hidden; overscroll-behavior: none; }
+body { position: fixed; inset: 0; }
 button { font-family: inherit; }
 .hidden { display: none !important; }
 .muted { color: var(--muted); }
 .lbl { font-size: 16px; font-weight: 600; letter-spacing: 0.12em; color: var(--muted); }
 
-#stage { position: absolute; left: 50%; top: 50%; width: 1280px; height: 720px; transform-origin: center center; transform: translate(-50%, -50%); background: var(--bg); overflow: hidden; }
+#stage { position: fixed; left: 0; top: 0; width: 1280px; height: 720px; transform-origin: 0 0; background: var(--bg); overflow: hidden; }
 .screen { position: absolute; inset: 0; display: none; }
 .screen.active { display: flex; }
 
