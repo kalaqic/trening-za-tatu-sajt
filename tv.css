@@ -131,7 +131,7 @@ button { font-family: inherit; }
 #s-rest.countdown .ring-sub { color: var(--muted); }
 
 /* ---------- KRAJ ---------- */
-#s-done.active { flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 40px 72px; }
+#s-done.active { flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 32px 72px; }
 .done-head { display: flex; align-items: center; gap: 24px; }
 .done-check { width: 88px; height: 88px; border-radius: 50%; background: var(--green); color: var(--bg); display: flex; align-items: center; justify-content: center; animation: pop .8s cubic-bezier(.2, 1.6, .4, 1) both; }
 .done-check.soft { background: var(--amber); }
@@ -152,6 +152,8 @@ button { font-family: inherit; }
 .orange-sub { color: #FDBA74; }
 .done-foot { display: flex; align-items: center; gap: 28px; }
 .done-bye { font-size: 24px; }
+.done-tip { font-size: 22px; font-weight: 600; color: var(--amber); text-align: center; }
+.done-tip:empty { display: none; }
 
 /* ---------- PAUZA, PORUKE ---------- */
 .pause { position: absolute; inset: 0; background: rgba(15, 20, 25, 0.82); display: flex; align-items: center; justify-content: center; z-index: 10; }

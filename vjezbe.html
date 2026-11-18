@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sve vježbe — pregled animacija</title>
+<title>Plan i sve vježbe</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,6 +55,31 @@ select { min-height: 52px; border-radius: 14px; border: 2px solid var(--line); b
 .btn:disabled { opacity: .4; cursor: default; }
 .hidden { display: none !important; }
 .confirm { border: 2px solid #5B2A2A; display: flex; flex-direction: column; gap: 12px; }
+
+.plan { display: flex; flex-direction: column; gap: 16px; }
+.phases { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.phase { padding: 14px 16px; border-radius: 16px; background: var(--bg); display: flex; flex-direction: column; gap: 4px; }
+.phase b { font-size: 17px; }
+.phase span { font-size: 14px; color: var(--muted); }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.cal-week { grid-column: 1 / -1; font-size: 14px; font-weight: 700; letter-spacing: .08em; color: var(--muted); margin-top: 8px; }
+.day { padding: 10px; border-radius: 14px; background: var(--bg); border: 2px solid transparent; display: flex; flex-direction: column; gap: 4px; min-width: 0; cursor: pointer; text-align: left; color: var(--text); font: inherit; }
+.day:hover, .day:focus-visible { border-color: var(--line); outline: none; }
+.day.sel { border-color: var(--green); }
+.day.now { background: var(--green-bg); }
+.day .dn { font-size: 15px; font-weight: 700; }
+.day .dt { font-size: 13px; color: var(--soft); }
+.day .dm { font-size: 13px; color: var(--muted); }
+.t-kardio .dt { color: #FDBA74; } .t-snaga .dt { color: #93C5FD; } .t-mix .dt { color: var(--green-soft); } .t-lagano .dt { color: var(--muted); }
+.daydetail { padding: 16px; border-radius: 16px; background: var(--bg); display: flex; flex-direction: column; gap: 10px; }
+.daydetail ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: var(--soft); }
+.daydetail ol li span { color: var(--muted); }
+.kind { padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.k-kardio { background: #2A1A0C; color: #FDBA74; } .k-snaga { background: #0F2140; color: #93C5FD; } .k-mobilnost { background: var(--green-bg); color: var(--green-soft); } .k-istezanje { background: #22163A; color: #C4B5FD; }
+.safety { border: 2px solid #5B2A2A; background: #1F1414; color: #FECACA; display: flex; flex-direction: column; gap: 6px; }
+.safety h3 { margin: 0; font-size: 18px; color: #FCA5A5; }
+.safety p { font-size: 15px; line-height: 1.5; }
+@media (max-width: 700px) { .cal { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 </style>
 </head>
 <body>
@@ -65,9 +90,26 @@ select { min-height: 52px; border-radius: 14px; border: 2px solid var(--line); b
 <main class="wrap">
   <header>
     <div class="eyebrow">SAMO ZA TEBE · TATA OVO NE VIDI</div>
-    <h1>Sve vježbe, od najlakše do najteže</h1>
-    <p class="sub">16 vježbi u 5 nivoa. Pritisni „Pusti” ispod vježbe da vidiš animaciju. Blijedi zeleni obris je položaj do kojeg treba doći.</p>
+    <h1>Plan za mršavljenje i sve vježbe</h1>
+    <p class="sub">Plan od 28 dana koji se poslije sam nastavlja, i 30 sjedećih vježbi poredanih od najlakše do najteže. Pritisni „Pusti” ispod vježbe da vidiš animaciju. Blijedi zeleni obris je položaj do kojeg treba doći.</p>
   </header>
+
+  <section class="box plan" aria-labelledby="plan-h">
+    <h2 id="plan-h">Plan od 28 dana</h2>
+    <p class="sub" id="plan-intro"></p>
+    <div class="phases" id="phases"></div>
+    <div class="cal" id="cal"></div>
+    <div class="daydetail" id="daydetail"></div>
+  </section>
+
+  <div class="box rules" id="rules"></div>
+
+  <div class="box safety">
+    <h3>Sigurnost</h3>
+    <p>Prije početka neka tata kaže doktoru da kreće sa vježbanjem, posebno ako ima problema sa srcem, pritiskom ili šećerom.</p>
+    <p>Pravilo „pričaj, ali ne pjevaj”: dok vježba, mora moći pričati. Ako ne može ni par riječi, neka uspori.</p>
+    <p>Odmah stati ako osjeti bol ili pritisak u grudima, vrtoglavicu, jako gušenje ili da srce preskače. To isto piše i na TV-u prije svakog treninga.</p>
+  </div>
 
   <div class="row">
     <div class="box slider">
@@ -81,7 +123,6 @@ select { min-height: 52px; border-radius: 14px; border: 2px solid var(--line); b
     </div>
   </div>
 
-  <div class="box rules" id="rules"></div>
   <div id="levels"></div>
 
   <section class="box admin" aria-labelledby="admin-h">
@@ -90,7 +131,7 @@ select { min-height: 52px; border-radius: 14px; border: 2px solid var(--line); b
       <a class="btn" href="index.html">Otvori TV ekran</a>
       <a class="btn" href="index.html?test=1">Brza proba TV-a (vježbe po 8 s, ništa se ne upisuje)</a>
     </div>
-    <p class="note">Podaci (kilaže, streak, nivo) čuvaju se na TV-u, a kopija na tatinom telefonu. Za promjenu nivoa poveži se sa TV-om kodom sa TV ekrana:</p>
+    <p class="note">Podaci (kilaže, streak, dan plana) čuvaju se na TV-u, a kopija na tatinom telefonu. Za promjenu dana poveži se sa TV-om kodom sa TV ekrana:</p>
     <form class="btns" id="tv-form">
       <label for="tv-code" class="note">Kod TV-a:</label>
       <input id="tv-code" inputmode="numeric" maxlength="7" placeholder="000000" autocomplete="off">
@@ -98,65 +139,100 @@ select { min-height: 52px; border-radius: 14px; border: 2px solid var(--line); b
       <span class="note" id="tv-status">Nije povezano</span>
     </form>
     <div class="btns">
-      <label for="lvl" class="note">Nivo:</label>
-      <select id="lvl"><option value="1">Nivo 1</option><option value="2">Nivo 2</option><option value="3">Nivo 3</option><option value="4">Nivo 4</option><option value="5">Nivo 5</option></select>
-      <button type="button" class="btn" id="lvl-set" disabled>Postavi nivo</button>
+      <label for="dayset" class="note">Dan plana:</label>
+      <select id="dayset"></select>
+      <button type="button" class="btn" id="day-set" disabled>Postavi dan</button>
       <button type="button" class="btn danger" id="reset" disabled>Obriši sve podatke</button>
     </div>
     <div class="box confirm hidden" id="confirm">
-      <p>Obrisati sve podatke na TV-u (kilaže, treninge, streak, nivo)? Ovo se ne može vratiti.</p>
+      <p>Obrisati sve podatke na TV-u (kilaže, treninge, streak, dan plana)? Ovo se ne može vratiti.</p>
       <div class="btns"><button type="button" class="btn" id="confirm-no">Ne</button><button type="button" class="btn danger" id="confirm-yes">Da, obriši</button></div>
     </div>
-    <p class="note" id="admin-msg">Ručna promjena nivoa poništava brojanje do sljedećeg nivoa.</p>
+    <p class="note" id="admin-msg"></p>
   </section>
 </main>
-<script src="program.js"></script>
-<script src="net.js"></script>
-<script src="lik.js"></script>
+<script src="program.js?v=4"></script>
+<script src="net.js?v=4"></script>
+<script src="lik.js?v=4"></script>
 <script>
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
+  var P = window.Program;
   var players = [];
+  var currentDay = 0, selDay = 1;
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var byId = {}; P.EXERCISES.forEach(function (e) { byId[e.id] = e; });
 
+  // ---------- plan ----------
+  $('plan-intro').textContent = 'Svaki dan ima zagrijavanje, glavni dio i smirivanje. Sedmični ritam: 2 kardio dana, 2 mješovita (kardio + snaga), 1 dan snage i 2 lagana dana za oporavak. Dan plana ide dalje tek kad tata uradi bar ' + Math.round(P.RULES.countsAsDone * 100) + '% vježbi. Kad je bilo preteško, isti dan se ponovi malo lakše.';
+  $('phases').innerHTML = P.PHASES.map(function (ph, i) {
+    var a = P.planForDay(i * 7 + 1, {}), b = P.planForDay(i * 7 + 2, {});
+    return '<div class="phase"><b>Sedmica ' + (i + 1) + ' · ' + esc(ph.name) + '</b><span>' + ph.work + ' s rada, ' + ph.rest + ' s odmora' + (ph.rounds > 1 ? ', ' + ph.rounds + ' kruga' : '') + '</span><span>oko ' + (a.minutes === b.minutes ? a.minutes : Math.min(a.minutes, b.minutes) + '–' + Math.max(a.minutes, b.minutes)) + ' min dnevno, lagani dan ' + P.planForDay(i * 7 + 4, {}).minutes + ' min</span></div>';
+  }).join('') + '<div class="phase"><b>Poslije 28. dana</b><span>Rad raste do 60 s, 3 kruga, ulaze i najteže vježbe</span><span>oko 16–26 min dnevno</span></div>';
+
+  function renderCal() {
+    var html = '';
+    for (var d = 1; d <= P.PLAN_DAYS; d++) {
+      if ((d - 1) % 7 === 0) html += '<div class="cal-week">SEDMICA ' + Math.ceil(d / 7) + ' · ' + esc(P.PHASES[Math.ceil(d / 7) - 1].name.toUpperCase()) + '</div>';
+      var p = P.planForDay(d, {});
+      html += '<button type="button" class="day t-' + p.type + (d === selDay ? ' sel' : '') + (d === currentDay ? ' now' : '') + '" data-day="' + d + '">' +
+        '<span class="dn">Dan ' + d + (d === currentDay ? ' · tata' : '') + '</span><span class="dt">' + esc(p.typeName) + '</span><span class="dm">' + p.minutes + ' min · ' + p.items.length + ' vježbi</span></button>';
+    }
+    $('cal').innerHTML = html;
+    Array.prototype.forEach.call($('cal').querySelectorAll('.day'), function (el) {
+      el.addEventListener('click', function () { selDay = Number(el.getAttribute('data-day')); renderCal(); renderDetail(); });
+    });
+  }
+  function renderDetail() {
+    var p = P.planForDay(selDay, {});
+    var rows = [], seen = {};
+    p.items.forEach(function (it) {
+      var key = it.id + ':' + it.tag;
+      if (it.round > 1 && seen[key]) return;
+      seen[key] = 1;
+      rows.push('<li>' + esc(it.name) + ' <span>— ' + it.dur + ' s' + (it.round ? ' × ' + p.rounds + ' kruga' : '') + ' · ' + esc(P.KINDS[it.kind]) + '</span></li>');
+    });
+    $('daydetail').innerHTML = '<b>Dan ' + selDay + ': ' + esc(p.typeName) + ' · oko ' + p.minutes + ' min (od toga ' + p.workMinutes + ' min rada)</b><ol>' + rows.join('') + '</ol>';
+  }
+  renderCal(); renderDetail();
+
+  // ---------- pravila ----------
+  var R = P.RULES;
+  $('rules').innerHTML = '<h3>Zašto ovako</h3>' +
+    '<p>Za mršavljenje je najvažnija ukupna količina kretanja, a uz to vježbe snage da tata ne gubi mišiće. Zato plan polako raste: prve sedmice oko 50 minuta vježbanja sedmično, četvrte oko 90. Poslije toga ide preko 2 sata sedmično.</p>' +
+    '<p>Ostatak dopunjavaju dnevni zadaci na kraju treninga: šetnja poslije jela, ustajanje svakih pola sata, voda prije obroka.</p>' +
+    '<p>Preskočena vježba se ne pojavljuje ' + R.skipBlockSessions + ' treninga. Ako je tražio „+15 s” dva puta, sljedeći trening ima 10 s duži odmor. Ako ' + R.abortsToStepBack + ' treninga zaredom prekine prije kraja, plan se vraća ' + R.stepBackDays + ' dana nazad.</p>' +
+    '<p>Streak: dan se računa kad uradi bar ' + Math.round(R.countsAsDone * 100) + '% vježbi, a ' + R.graceDaysPerWeek + ' slobodan dan sedmično ne prekida niz.</p>';
+
+  // ---------- biblioteka ----------
   function setBtn(p) {
     p.btn.classList.toggle('primary', !p.player.playing);
     p.btn.classList.toggle('light', p.player.playing);
     p.btn.innerHTML = '<svg aria-hidden="true"><use href="#' + (p.player.playing ? 'i-pause' : 'i-play') + '"/></svg>' + (p.player.playing ? 'Zaustavi' : 'Pusti');
   }
-
-  Promise.resolve({ levels: window.Program.LEVELS, exercises: window.Program.EXERCISES, rules: window.Program.RULES, level: 0 }).then(function (d) {
-    var R = d.rules;
-    $('rules').innerHTML = '<h3>Kako program sam napreduje</h3>' +
-      '<p>Počinje na Nivou 1. Svaki trening ima 8 vježbi: zagrijavanje, glavni dio sa njegovog nivoa, jednu novu vježbu sa sljedećeg nivoa (samo 20 s, da proba) i smirivanje.</p>' +
-      '<p>Unutar nivoa vježbe se produžavaju: ' + R.mainDur.join(' → ') + ' sekundi.</p>' +
-      '<p>Nakon ' + R.cleanToLevelUp + ' čistih treninga (do kraja, bez preskakanja i bez „+15 s”) prelazi na sljedeći nivo.</p>' +
-      '<p>Preskočena vježba se ne pojavljuje ' + R.skipBlockSessions + ' treninga. Ako ' + R.abortsToLevelDown + ' treninga zaredom prekine prije kraja, vraća se nivo nazad. Ako je tražio „+15 s” bar dva puta, sljedeći put odmor je 5 s duži.</p>' +
-      '<p>Streak: dan se računa kad uradi bar ' + Math.round(R.countsAsDone * 100) + '% vježbi. ' + R.graceDaysPerWeek + ' slobodan dan sedmično ne prekida niz.</p>';
-    var html = '';
-    d.levels.forEach(function (L) {
-      html += '<section class="level"><div class="level-head"><h2>Nivo ' + L.n + ' — ' + esc(L.name) + '</h2><span class="sub">' + esc(L.desc) + '</span>' + '' + '</div><div class="grid">';
-      d.exercises.forEach(function (e, idx) {
-        if (e.level !== L.n) return;
-        html += '<article class="card"><div class="meta"><span>#' + (idx + 1) + '</span><span>Nivo ' + e.level + '</span></div>' +
-          '<div class="stage" data-ex="' + esc(e.id) + '"></div>' +
-          '<div class="name">' + esc(e.name) + '</div><div class="how">' + esc(e.how) + '</div>' +
-          '<button type="button" class="btn primary" data-play="' + esc(e.id) + '"></button></article>';
-      });
-      html += '</div></section>';
+  var html = '', num = 0;
+  P.LEVELS.forEach(function (L) {
+    html += '<section class="level"><div class="level-head"><h2>Nivo ' + L.n + ' — ' + esc(L.name) + '</h2><span class="sub">' + esc(L.desc) + '</span></div><div class="grid">';
+    P.EXERCISES.forEach(function (e) {
+      if (e.level !== L.n) return;
+      num++;
+      html += '<article class="card"><div class="meta"><span>#' + num + '</span><span class="kind k-' + e.kind + '">' + esc(P.KINDS[e.kind]) + '</span></div>' +
+        '<div class="stage" data-ex="' + esc(e.id) + '"></div>' +
+        '<div class="name">' + esc(e.name) + '</div><div class="how">' + esc(e.how) + '</div>' +
+        '<button type="button" class="btn primary" data-play="' + esc(e.id) + '"></button></article>';
     });
-    $('levels').innerHTML = html;
-    $('levels').style.display = 'flex'; $('levels').style.flexDirection = 'column'; $('levels').style.gap = '32px';
-    document.querySelectorAll('.stage').forEach(function (el) {
-      var id = el.getAttribute('data-ex');
-      var p = { id: id, player: new window.LikPlayer(el, { ex: id, kg: Number($('kg').value), showCue: true }), btn: document.querySelector('[data-play="' + id + '"]') };
-      players.push(p);
-      setBtn(p);
-      p.btn.addEventListener('click', function () { if (p.player.playing) p.player.pause(); else p.player.play(); setBtn(p); });
-    });
+    html += '</div></section>';
   });
-
+  $('levels').innerHTML = html;
+  $('levels').style.display = 'flex'; $('levels').style.flexDirection = 'column'; $('levels').style.gap = '32px';
+  document.querySelectorAll('.stage').forEach(function (el) {
+    var id = el.getAttribute('data-ex');
+    var p = { id: id, player: new window.LikPlayer(el, { ex: id, kg: Number($('kg').value), showCue: true }), btn: document.querySelector('[data-play="' + id + '"]') };
+    players.push(p);
+    setBtn(p);
+    p.btn.addEventListener('click', function () { if (p.player.playing) p.player.pause(); else p.player.play(); setBtn(p); });
+  });
   $('kg').addEventListener('input', function () {
     var v = Number(this.value);
     $('kg-txt').textContent = String(v).replace('.', ',') + ' kg';
@@ -164,30 +240,41 @@ select { min-height: 52px; border-radius: 14px; border: 2px solid var(--line); b
   });
   $('all-play').addEventListener('click', function () { players.forEach(function (p) { p.player.play(); setBtn(p); }); });
   $('all-stop').addEventListener('click', function () { players.forEach(function (p) { p.player.stop(); setBtn(p); }); });
+
+  // ---------- veza sa TV-om (podešavanja) ----------
+  var opts = '';
+  for (var d = 1; d <= 56; d++) opts += '<option value="' + d + '">Dan ' + d + (d > P.PLAN_DAYS ? ' (nastavak)' : '') + '</option>';
+  $('dayset').innerHTML = opts;
   var net = null;
   var saved = window.Net.lsGet('tata-room') || window.Net.lsGet('tata-tv-code');
   if (saved) $('tv-code').value = saved;
-  function setEnabled(on) { $('lvl-set').disabled = !on; $('reset').disabled = !on; }
+  function setEnabled(on) { $('day-set').disabled = !on; $('reset').disabled = !on; }
   $('tv-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var c = $('tv-code').value.replace(/\D/g, '');
     if (c.length !== 6) { $('tv-status').textContent = 'Kod ima 6 brojeva'; return; }
-    if (net) { location.hash = ''; }
     $('tv-status').textContent = 'Povezujem…';
     net = window.Net.client(c, {
       onOpenChange: function (open) { setEnabled(open); $('tv-status').textContent = open ? 'Povezano sa TV-om' : 'Tražim TV… (mora biti otvoren)'; },
       onOpen: function () { net.send({ t: 'getSummary' }); },
-      onMsg: function (m) { if (m.t === 'summary' && m.summary) { $('lvl').value = String(m.summary.level); $('admin-msg').textContent = 'Tata je na Nivou ' + m.summary.level + ', streak ' + m.summary.streak + '.'; } }
+      onMsg: function (m) {
+        if (m.t === 'summary' && m.summary) {
+          currentDay = m.summary.day; selDay = Math.min(currentDay, P.PLAN_DAYS) || 1;
+          $('dayset').value = String(Math.min(56, currentDay));
+          $('admin-msg').textContent = 'Tata je na danu ' + m.summary.day + ' (sedmica ' + m.summary.planWeek + '), streak ' + m.summary.streak + '.';
+          renderCal(); renderDetail();
+        }
+      }
     });
   });
-  $('lvl-set').addEventListener('click', function () {
-    if (net && net.send({ t: 'admin', action: 'level', level: Number($('lvl').value) })) $('admin-msg').textContent = 'Postavljeno: Nivo ' + $('lvl').value + '. TV se sam osvježio.';
+  $('day-set').addEventListener('click', function () {
+    if (net && net.send({ t: 'admin', action: 'day', day: Number($('dayset').value) })) { $('admin-msg').textContent = 'Postavljeno: Dan ' + $('dayset').value + '. TV se sam osvježio.'; net.send({ t: 'getSummary' }); }
   });
   $('reset').addEventListener('click', function () { $('confirm').classList.remove('hidden'); });
   $('confirm-no').addEventListener('click', function () { $('confirm').classList.add('hidden'); });
   $('confirm-yes').addEventListener('click', function () {
     $('confirm').classList.add('hidden');
-    if (net && net.send({ t: 'admin', action: 'reset' })) { $('admin-msg').textContent = 'Sve obrisano. Kreće ispočetka od Nivoa 1.'; $('lvl').value = '1'; }
+    if (net && net.send({ t: 'admin', action: 'reset' })) { $('admin-msg').textContent = 'Sve obrisano. Kreće ispočetka od Dana 1.'; net.send({ t: 'getSummary' }); }
   });
 })();
 </script>

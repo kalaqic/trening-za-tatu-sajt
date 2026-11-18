@@ -7,7 +7,7 @@
   var NS = 'http://www.w3.org/2000/svg';
 
   var SIDE = { tilt: 0, hip: [0, 0], sh: [0, 0], hN: [45, 72], hF: [41, 74], aN: [0, 0], aF: [-10, 0], tN: [0, 0], tF: [0, 0] };
-  var FRONT = { tilt: 0, shift: [0, 0], twist: 0, cross: 0, toHead: 0, hL: [10, 80], hR: [10, 80], kL: 0, kR: 0, oL: 0, oR: 0 };
+  var FRONT = { tilt: 0, shift: [0, 0], twist: 0, cross: 0, toHead: 0, join: 0, J: [200, 180], hL: [10, 80], hR: [10, 80], kL: 0, kR: 0, oL: 0, oR: 0, kxL: 0, kxR: 0 };
   var guard = { hN: [26, -14], hF: [24, -12] };
   function standUp(extra) { return Object.assign({ tilt: 4, hip: [52, -72] }, extra || {}); }
 
@@ -59,7 +59,51 @@
       ghost: 0.5, split: 0.6, a: 'Odgurni se rukama i ustani', b: 'Polako sjedni' },
     ustajanje: { view: 'side', dur: 5, base: { aN: [-14, 0], aF: [-24, 0], hN: [28, 18], hF: [26, 20] },
       keys: [[0, {}], [0.2, { tilt: 36 }], [0.45, standUp()], [0.6, standUp()], [0.8, { tilt: 36, hip: [16, -16] }], [1, {}]],
-      ghost: 0.5, split: 0.6, a: 'Nagni se naprijed i ustani', b: 'Polako sjedni' }
+      ghost: 0.5, split: 0.6, a: 'Nagni se naprijed i ustani', b: 'Polako sjedni' },
+
+    /* ---- nove vježbe ---- */
+    biceps: { view: 'side', dur: 3, base: { hN: [12, 106], hF: [10, 106] },
+      keys: [[0, {}], [0.4, { hN: [30, 4], hF: [28, 6] }], [0.55, { hN: [30, 4], hF: [28, 6] }], [1, {}]],
+      ghost: 0.5, split: 0.5, a: 'Savij ruke gore', b: 'Polako dolje' },
+    potisak: { view: 'front', dur: 3.2, base: { hL: [12, -8], hR: [12, -8] },
+      keys: [[0, {}], [0.4, { hL: [16, -108], hR: [16, -108] }], [0.55, { hL: [16, -108], hR: [16, -108] }], [1, {}]],
+      ghost: 0.5, split: 0.5, a: 'Gurni ruke gore', b: 'Polako do ramena' },
+    kruzenjeRuku: { view: 'front', dur: 1.6,
+      keys: [[0, { hL: [108, -14], hR: [108, -14] }], [0.25, { hL: [98, 0], hR: [98, 0] }], [0.5, { hL: [108, 14], hR: [108, 14] }], [0.75, { hL: [114, 0], hR: [114, 0] }], [1, { hL: [108, -14], hR: [108, -14] }]],
+      ghost: 0.5, split: 2, a: 'Mali krugovi rukama', b: '' },
+    veslanje: { view: 'side', dur: 3,
+      keys: [[0, { hN: [96, 34], hF: [92, 36], tilt: 10 }], [0.4, { hN: [0, 74], hF: [-2, 76], tilt: -6 }], [0.55, { hN: [0, 74], hF: [-2, 76], tilt: -6 }], [1, { hN: [96, 34], hF: [92, 36], tilt: 10 }]],
+      ghost: 0.5, split: 0.5, a: 'Povuci laktove nazad', b: 'Ruke naprijed' },
+    koljenaVan: { view: 'front', dur: 2.4, base: { hL: [-6, 80], hR: [-6, 80] },
+      keys: [[0, {}], [0.4, { kxL: 42, kxR: 42 }], [0.55, { kxL: 42, kxR: 42 }], [1, {}]],
+      ghost: 0.5, split: 0.5, a: 'Koljena van', b: 'I zajedno' },
+    noguUStranu: { view: 'front', dur: 1.8, base: { hL: [-6, 78], hR: [-6, 78] },
+      keys: [[0, {}], [0.25, { oL: 40, kxL: 12 }], [0.5, {}], [0.75, { oR: 40, kxR: 12 }], [1, {}]],
+      ghost: 0.25, split: 0.5, a: 'Noga u stranu', b: 'Druga noga' },
+    brzeNoge: { view: 'side', dur: 0.6, base: { hN: [32, 44], hF: [30, 46] },
+      keys: [[0, {}], [0.25, { aN: [4, -22], hN: [44, 26], hF: [20, 62] }], [0.5, {}], [0.75, { aF: [-6, -22], hF: [44, 26], hN: [20, 62] }], [1, {}]],
+      ghost: 0.25, split: 2, a: 'Brzo, brzo stopalima!', b: '' },
+    koljenoGrudi: { view: 'side', dur: 2.6, base: { hN: [2, 100], hF: [0, 100] },
+      keys: [[0, {}], [0.25, { aN: [-20, -84], tilt: 5 }], [0.5, {}], [0.75, { aF: [-30, -84], tilt: 5 }], [1, {}]],
+      ghost: 0.25, split: 0.5, a: 'Koljeno prema grudima', b: 'Drugo koljeno' },
+    drvosjeca: { view: 'front', dur: 3, base: { join: 1 },
+      keys: [[0, { J: [248, 44], twist: 0.5 }], [0.45, { J: [154, 234], twist: -0.6, tilt: -6 }], [0.55, { J: [154, 234], twist: -0.6, tilt: -6 }], [1, { J: [248, 44], twist: 0.5 }]],
+      ghost: 0.5, split: 0.45, a: 'Ruke gore desno…', b: '…i dolje lijevo' },
+    udarciNogom: { view: 'side', dur: 1.8, base: guard,
+      keys: [[0, {}], [0.22, { aN: [100, -80], tN: [-26, -36] }], [0.45, {}], [0.72, { aF: [90, -80], tF: [-26, -36] }], [0.95, {}], [1, {}]],
+      ghost: 0.22, split: 0.45, a: 'Udarac nogom!', b: 'Druga noga!' },
+    boksGore: { view: 'front', dur: 1.2, base: { hL: [-24, -26], hR: [-24, -26] },
+      keys: [[0, {}], [0.25, { hL: [6, -110] }], [0.5, {}], [0.75, { hR: [6, -110] }], [1, {}]],
+      ghost: 0.25, split: 0.5, a: 'Udarac gore!', b: 'Druga ruka!' },
+    polaUstajanja: { view: 'side', dur: 5, base: { aN: [-14, 0], aF: [-24, 0] },
+      keys: [[0, {}], [0.3, { tilt: 32, hip: [24, -26], hN: [96, 4], hF: [94, 6] }], [0.6, { tilt: 32, hip: [24, -26], hN: [96, 4], hF: [94, 6] }], [1, {}]],
+      ghost: 0.45, split: 0.6, a: 'Odigni se malo… zadrži', b: 'Polako sjedni' },
+    stretchNoge: { view: 'side', dur: 6,
+      keys: [[0, {}], [0.3, { aN: [90, -6], tN: [-24, -30], tilt: 24, hN: [60, 90], hF: [56, 92] }], [0.75, { aN: [90, -6], tN: [-24, -30], tilt: 24, hN: [60, 90], hF: [56, 92] }], [1, {}]],
+      ghost: 0.5, split: 0.75, a: 'Peta na pod, nagni se… zadrži', b: 'Polako nazad' },
+    disanje: { view: 'front', dur: 8,
+      keys: [[0, {}], [0.45, { hL: [90, -40], hR: [90, -40] }], [0.55, { hL: [90, -40], hR: [90, -40] }], [1, {}]],
+      ghost: 0.5, split: 0.5, a: 'Duboko udahni…', b: '…polako izdahni' }
   };
 
   function lerpV(a, b, e) {
@@ -172,7 +216,8 @@
     function target(S, h, side, crossT, headT) {
       var T = [S[0] + side * h[0], S[1] + h[1]];
       T = lerpP(T, crossT, P.cross);
-      return lerpP(T, headT, P.toHead);
+      T = lerpP(T, headT, P.toHead);
+      return lerpP(T, [P.J[0] + side * 7, P.J[1]], P.join);
     }
     function arm(S, T, side) {
       var res = ik(S, T, 58, 54, function (e1, e2) { return side < 0 ? (e1[0] < e2[0] ? e1 : e2) : (e1[0] > e2[0] ? e1 : e2); });
@@ -180,12 +225,12 @@
     }
     var L = arm(Ls, target(Ls, P.hL, -1, crossL, headL), -1);
     var R = arm(Rs, target(Rs, P.hR, 1, crossR, headRt), 1);
-    function leg(side, k, o) {
+    function leg(side, k, o, kx) {
       var hx = cx + side * hw * 0.6;
-      var H = [hx, 262], K = [hx + side * 3, 272 - k], A = [hx + side * (5 + o), 350 - k * 0.85];
+      var H = [hx, 262], K = [hx + side * (3 + kx), 272 - k], A = [hx + side * (5 + o + kx * 0.25), 350 - k * 0.85];
       return { thigh: line(H, K), shin: line(K, A), shoe: line([A[0] - 9, A[1] + 8], [A[0] + 9, A[1] + 8]) };
     }
-    var lL = leg(-1, P.kL, P.oL), lR = leg(1, P.kR, P.oR);
+    var lL = leg(-1, P.kL, P.oL, P.kxL), lR = leg(1, P.kR, P.oR, P.kxR);
     var eo = P.twist * 5;
     return {
       U: U,
@@ -376,4 +421,5 @@
   window.Lik = Lik;
   window.LikPlayer = LikPlayer;
   window.LIK_IDS = Object.keys(EX);
+  window.LIK_PEAK = function (id) { return (EX[id] || EX.ruke).ghost; };
 })();

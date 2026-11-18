@@ -13,7 +13,7 @@ Ovo je statični sajt: samo fajlovi, bez servera. Objavi **sve fajlove iz ovog f
 
 - **TV:** `.../trening-za-tatu/`. Na TV-u otvori ovo i ostavi kao zabilješku (bookmark).
 - **Telefon:** skenira QR kod sa TV-a. Link ostaje isti, pa ga tata može sačuvati na početni ekran telefona.
-- **Za tebe:** `.../trening-za-tatu/vjezbe.html` ima sve animacije i promjenu nivoa.
+- **Za tebe:** `.../trening-za-tatu/vjezbe.html` ima plan po danima, sve animacije i promjenu dana plana.
 - **Brza proba:** `.../trening-za-tatu/?test=1` pušta vježbe od po 8 s i ništa ne upisuje.
 
 ## Kako radi
@@ -22,7 +22,10 @@ Ovo je statični sajt: samo fajlovi, bez servera. Objavi **sve fajlove iz ovog f
 - Oba uređaja trebaju internet. Najbolje radi kad su na istoj Wi-Fi mreži.
 - Podaci (kilaže, treninzi, streak, nivo) čuvaju se u browseru na TV-u, a kopija na tatinom telefonu. Ako TV izgubi podatke, telefon ih vrati pri sljedećem povezivanju.
 - Kod na TV-u je uvijek isti, osim ako se obriše memorija browsera na TV-u.
-- Pravila napretka su na vrhu `program.js` (`RULES`).
+- Plan od 28 dana: 4 sedmice (Upoznavanje → Navikavanje → Jačanje → Sagorijevanje). Svaka sedmica ima 2 kardio, 2 mješovita, 1 dan snage i 2 lagana dana. Poslije 28. dana plan se sam nastavlja, malo jače.
+- Dan plana ide dalje tek kad tata uradi bar 75% vježbi. Ako je bilo preteško, dan se ponovi malo lakše.
+- Kompletan plan po danima i sve vježbe su na `vjezbe.html`.
+- Pravila su na vrhu `program.js` (`PHASES`, `WEEK_TYPES`, `RULES`).
 
 ## Fajlovi
 
@@ -32,6 +35,6 @@ Ovo je statični sajt: samo fajlovi, bez servera. Objavi **sve fajlove iz ovog f
 | `p.html`, `phone.js`, `phone.css` | daljinski na telefonu |
 | `vjezbe.html` | biblioteka vježbi |
 | `lik.js` | animirani lik |
-| `program.js` | vježbe, nivoi, napredak, streak |
+| `program.js` | 30 vježbi, plan od 28 dana, napredak, streak |
 | `net.js` | veza TV ↔ telefon i čuvanje podataka |
 | `qr.js` | pravi QR kod (biblioteka Kazuhiko Arase, MIT) |

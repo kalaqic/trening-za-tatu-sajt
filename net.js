@@ -139,7 +139,7 @@
   /* ---------- podaci (čuva TV) ---------- */
   function fresh() {
     return { version: 1, weights: {}, sessions: [], record: 0, updated: 0,
-      prog: { level: 1, cleanAtLevel: 0, abortStreak: 0, restBonus: 0, skipBlock: {}, sessionsCount: 0 } };
+      prog: { day: 1, ease: 0, lastAdvance: null, abortStreak: 0, restBonus: 0, skipBlock: {}, sessionsCount: 0 } };
   }
   function normalize(raw) {
     var base = fresh();

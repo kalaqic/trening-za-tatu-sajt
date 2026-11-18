@@ -86,10 +86,10 @@
     renderDelta();
     if (s.todayDone) {
       $('today-main').textContent = 'Danas si već vježbao. Bravo!';
-      $('today-sub').textContent = 'Možeš opet ako želiš: Nivo ' + s.level + ' · ' + s.plan.count + ' vježbi';
+      $('today-sub').textContent = 'Možeš još jedan kratki trening: Dan ' + s.day + ' · ' + s.plan.typeName;
     } else {
-      $('today-main').textContent = 'Nivo ' + s.level + ' · ' + s.plan.count + ' vježbi · oko ' + s.plan.minutes + ' min';
-      $('today-sub').textContent = s.plan.trialName ? 'Nova vježba danas: ' + s.plan.trialName : 'Sve vježbe su sjedeći na stolici';
+      $('today-main').textContent = 'Dan ' + s.day + (s.inPlan ? ' od ' + s.planDays : '') + ' · ' + s.plan.typeName;
+      $('today-sub').textContent = s.plan.count + ' vježbi · oko ' + s.plan.minutes + ' min · sedmica ' + s.planWeek + ': ' + s.weekName;
     }
     $('btn-go').querySelector('span').textContent = s.weight.today && !S.kgTouched ? 'Pokreni na TV-u' : 'Spremi i pokreni na TV-u';
   }
@@ -135,7 +135,7 @@
     card.classList.toggle('rest', isRest);
     $('r-phase').textContent = isCd ? 'PRIPREMI SE' : (isRest ? 'ODMOR' : 'VJEŽBA ' + (st.i + 1) + ' OD ' + st.total);
     $('r-name').textContent = isCd ? 'Prva: ' + st.firstName : (isRest ? 'Sljedeće: ' + st.nextName : st.name);
-    $('r-sub').textContent = isRest || isCd ? '' : (st.nextName ? 'zatim odmor ' + st.rest + ' s' : 'posljednja vježba');
+    $('r-sub').textContent = isRest || isCd ? '' : (!st.nextName ? 'posljednja vježba' : (st.rest ? 'zatim odmor ' + st.rest + ' s' : 'odmah sljedeća'));
     $('btn-pp').classList.toggle('paused', !!st.paused);
     $('btn-pp').setAttribute('aria-label', st.paused ? 'Nastavi' : 'Pauza');
     $('pp-icon').setAttribute('href', st.paused ? '#i-play' : '#i-pause');
@@ -161,7 +161,8 @@
     $('d-check').classList.toggle('soft', !res.counts);
     $('d-streak').textContent = res.streak;
     $('d-record').classList.toggle('hidden', !res.newRecord);
-    $('d-level').textContent = res.levelChange > 0 ? 'Napredak! Sljedeći put: Nivo ' + res.level : (res.levelChange < 0 ? 'Malo smo olakšali: Nivo ' + res.level : '');
+    var msg = res.planFinished ? 'Plan od 28 dana završen!' : (res.newWeek ? 'Nova sedmica ' + res.nextWeek + ': ' + res.nextWeekName : (res.advanced ? 'Sljedeći put: Dan ' + res.nextDay : (!res.counts ? 'Sljedeći put ponavljamo Dan ' + res.nextDay : '')));
+    $('d-level').textContent = msg + (res.tip ? (msg ? ' · ' : '') + 'Za danas: ' + res.tip : '');
   }
 
   function keepAwake() {

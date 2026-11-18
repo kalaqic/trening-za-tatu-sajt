@@ -14,7 +14,7 @@
   var P = window.Program;
   var data = window.Net.loadData();
   function save() { window.Net.saveData(data); if (net) net.broadcast({ t: 'backup', data: data }); }
-  var TAGS = { zagrijavanje: 'Zagrijavanje', glavna: 'Glavni dio', proba: 'Nova vježba — samo probaj', smirivanje: 'Smirivanje' };
+  var TAGS = { zagrijavanje: 'Zagrijavanje', glavna: 'Glavni dio', lagano: 'Lagani dan', smirivanje: 'Smirivanje' };
   var CHECK = '<svg aria-hidden="true"><use href="#i-check"/></svg>';
 
   // ---------- pomoćne ----------
@@ -152,10 +152,10 @@
     $('greet').textContent = h < 11 ? 'Dobro jutro!' : (h < 18 ? 'Dobar dan!' : 'Dobro veče!');
     $('home-title').textContent = s.todayDone ? 'Danas si već vježbao. Bravo!' : 'Spreman za današnji trening?';
     $('chips').innerHTML =
-      '<div class="chip lvl">Nivo ' + s.level + ' od 5</div>' +
+      '<div class="chip lvl">' + (s.inPlan ? 'Dan ' + s.day + ' od ' + s.planDays : 'Dan ' + s.day + ' · nastavak') + '</div>' +
+      '<div class="chip">' + esc(s.plan.typeName) + '</div>' +
       '<div class="chip">' + s.plan.count + ' vježbi</div>' +
-      '<div class="chip">oko ' + s.plan.minutes + ' min</div>' +
-      '<div class="chip">sve sjedeći na stolici</div>';
+      '<div class="chip">oko ' + s.plan.minutes + ' min</div>';
     $('home-streak').textContent = s.streak;
     $('home-record').textContent = 'Rekord: ' + s.record;
     renderWeek($('home-week'), s.week);
@@ -230,8 +230,8 @@
       if (v >= 30 && v <= 300) { data.weights[P.dayKey()] = v; save(); loadSummary(); }
     } else if (msg.t === 'getSummary') net.send(conn, { t: 'summary', summary: S.summary });
     else if (msg.t === 'admin') {
-      if (msg.action === 'level') {
-        data.prog.level = Math.max(1, Math.min(5, Number(msg.level) || 1)); data.prog.cleanAtLevel = 0; data.prog.abortStreak = 0;
+      if (msg.action === 'day') {
+        data.prog.day = Math.max(1, Math.min(200, Number(msg.day) || 1)); data.prog.abortStreak = 0; data.prog.ease = 0; data.prog.lastAdvance = null;
       } else if (msg.action === 'reset') data = window.Net.fresh();
       save(); loadSummary();
     }
@@ -243,7 +243,7 @@
       screen: S.screen, phase: S.phase, paused: S.paused,
       i: S.i, total: plan ? plan.items.length : 0,
       name: it ? it.name : '', nextName: nx ? nx.name : '', firstName: plan ? plan.items[0].name : '',
-      remaining: Math.max(0, S.remaining), phaseDur: S.phaseDur, rest: plan ? plan.rest : 0,
+      remaining: Math.max(0, S.remaining), phaseDur: S.phaseDur, rest: it ? it.rest : 0, day: plan ? plan.day : 0,
       streak: S.summary ? S.summary.streak : 0, result: S.screen === 'done' ? S.result : null
     };
   }
@@ -268,7 +268,7 @@
     clearTimeout(homeTimer);
     Promise.resolve(P.makePlan(data, P.dayKey())).then(function (plan) {
       S.starting = false;
-      if (TEST) { plan.items.forEach(function (it) { it.dur = 8; }); plan.rest = 4; }
+      if (TEST) { plan.items.forEach(function (it) { it.dur = 8; if (it.rest) it.rest = 4; }); }
       Music.set('loud');
       S.plan = plan; S.i = 0; S.skippedIdx = {}; S.doneIdx = {}; S.extraRest = 0; S.activeSec = 0; S.result = null; S.paused = false; S.finishing = false;
       $('pause').classList.add('hidden');
@@ -287,8 +287,9 @@
     $('rest-i').textContent = S.plan.items.length; $('rest-n').parentNode.style.display = 'none';
     segs($('rest-segs'), 0, -1);
     $('rest-title').textContent = 'PRIPREMI SE';
-    $('rest-text').innerHTML = 'Sjedni udobno na stolicu,<br>stopala na pod.';
-    $('rest-hint').classList.add('hidden');
+    $('rest-text').innerHTML = 'Sjedni udobno, stopala na pod.<br>Diši normalno i ne zadržavaj dah.';
+    $('rest-hint-text').textContent = 'Ako osjetiš bol u grudima, vrtoglavicu ili ne možeš doći do daha — odmah stani.';
+    $('rest-hint').classList.remove('hidden');
     $('rest-next').textContent = first.name;
     $('rest-next-dur').textContent = first.dur + ' ' + sekundi(first.dur);
     $('rest-streak').textContent = streakText(S.summary ? S.summary.streak : 0);
@@ -307,12 +308,12 @@
     segs($('ex-segs'), i, i);
     $('ex-name').textContent = it.name;
     $('ex-how').textContent = it.how;
-    $('ex-tag').textContent = TAGS[it.tag] || '';
-    $('ex-tag').classList.toggle('proba', it.tag === 'proba');
-    $('ex-level').textContent = S.plan.level;
-    $('ex-levelname').textContent = S.plan.levelName;
+    $('ex-tag').textContent = (TAGS[it.tag] || '') + (it.round ? ' · krug ' + it.round + ' od ' + S.plan.rounds : '');
+    $('ex-tag').classList.toggle('proba', it.tag === 'glavna');
+    $('ex-level').textContent = S.plan.day;
+    $('ex-levelname').textContent = 'Sedmica ' + S.plan.week + ' · ' + S.plan.weekName;
     $('ex-next').textContent = nx ? nx.name + ' · ' + nx.dur + ' s' : 'Kraj treninga';
-    $('ex-restinfo').textContent = nx ? 'Zatim odmor ' + S.plan.rest + ' s' : 'Posljednja vježba!';
+    $('ex-restinfo').textContent = !nx ? 'Posljednja vježba!' : (it.rest >= 45 ? 'Zatim veliki odmor ' + it.rest + ' s' : (it.rest ? 'Zatim odmor ' + it.rest + ' s' : 'Odmah sljedeća'));
     $('ex-streak').textContent = streakText(S.summary ? S.summary.streak : 0);
     likNext.pause();
     likMain.setWeight(kg()); likMain.setExercise(it.id);
@@ -325,16 +326,18 @@
 
   function beginRest() {
     S.phase = 'rest';
-    var nx = S.plan.items[S.i + 1];
-    S.remaining = S.phaseDur = S.plan.rest;
+    var nx = S.plan.items[S.i + 1], cur = S.plan.items[S.i];
+    S.remaining = S.phaseDur = cur.rest;
     S.lastSec = null;
     $('s-rest').classList.remove('countdown');
     $('rest-done-lbl').textContent = 'ZAVRŠENO';
     $('rest-n').parentNode.style.display = '';
     $('rest-i').textContent = S.i + 1; $('rest-n').textContent = S.plan.items.length;
     segs($('rest-segs'), S.i + 1, -1);
-    $('rest-title').textContent = 'ODMOR';
-    $('rest-text').innerHTML = 'Popij gutljaj vode<br>i diši polako.';
+    var bigRest = cur.round && nx.round && nx.round > cur.round;
+    $('rest-title').textContent = bigRest ? 'VELIKI ODMOR' : 'ODMOR';
+    $('rest-text').innerHTML = bigRest ? 'Krug ' + cur.round + ' gotov. Bravo!<br>Popij vode, slijedi krug ' + nx.round + '.' : 'Popij gutljaj vode<br>i diši polako.';
+    $('rest-hint-text').textContent = 'Treba ti više vremena? Na telefonu pritisni „+15 s”.';
     $('rest-hint').classList.remove('hidden');
     $('rest-next').textContent = nx.name;
     $('rest-next-dur').textContent = nx.dur + ' ' + sekundi(nx.dur);
@@ -355,6 +358,7 @@
     if (S.phase === 'exercise') {
       markDone(S.i);
       if (S.i >= S.plan.items.length - 1) return finish(true);
+      if (!S.plan.items[S.i].rest) return beginExercise(S.i + 1);
       return beginRest();
     }
     if (S.phase === 'rest') return beginExercise(S.i + 1);
@@ -366,6 +370,7 @@
       if (!S.doneIdx[S.i]) S.skippedIdx[S.i] = true;
       if (S.i >= S.plan.items.length - 1) return finish(true);
       toast('Preskočeno');
+      if (!S.plan.items[S.i].rest) return beginExercise(S.i + 1);
       return beginRest();
     }
     if (S.phase === 'rest') return beginExercise(S.i + 1);
@@ -409,8 +414,8 @@
   }
 
   function fakeResult(p) {
-    var s = S.summary || { streak: 0, record: 0, week: [], level: 1, levelName: '' };
-    return { counts: true, done: p.done, total: p.total, seconds: p.seconds, streak: s.streak, record: s.record, newRecord: false, levelChange: 0, level: s.level, levelName: s.levelName, week: s.week, test: true };
+    var s = S.summary || { streak: 0, record: 0, week: [], day: 1, tip: '' };
+    return { counts: true, done: p.done, total: p.total, seconds: p.seconds, streak: s.streak, record: s.record, newRecord: false, advanced: false, steppedBack: false, dayDone: s.day, nextDay: s.day, tip: s.tip, week: s.week, test: true };
   }
 
   function showDone(res) {
@@ -423,11 +428,16 @@
     $('done-ex-sub').textContent = res.done === res.total ? 'sve urađeno' : 'urađeno';
     $('done-streak').textContent = res.streak;
     $('done-record').classList.toggle('hidden', !res.newRecord);
-    var b = $('level-banner');
-    b.classList.toggle('hidden', !res.levelChange);
-    b.classList.toggle('down', res.levelChange < 0);
-    if (res.levelChange > 0) b.textContent = 'Napredak! Od sljedećeg treninga: Nivo ' + res.level + ' — ' + res.levelName;
-    if (res.levelChange < 0) b.textContent = 'Malo smo olakšali: sad je Nivo ' + res.level;
+    var b = $('level-banner'), msg = '';
+    if (res.planFinished) msg = 'Završio si plan od 28 dana! Idemo dalje, malo jače.';
+    else if (res.newWeek) msg = 'Nova sedmica ' + res.nextWeek + ': ' + res.nextWeekName + '!';
+    else if (res.advanced) msg = 'Dan ' + res.dayDone + ' gotov. Sljedeći put: Dan ' + res.nextDay + '.';
+    else if (res.steppedBack) msg = 'Malo smo olakšali: vraćamo se na Dan ' + res.nextDay + '.';
+    else if (!res.counts) msg = 'Sljedeći put ponavljamo Dan ' + res.nextDay + ', malo lakše.';
+    b.textContent = msg;
+    b.classList.toggle('hidden', !msg);
+    b.classList.toggle('down', !res.counts);
+    $('done-tip').textContent = res.tip ? 'Zadatak za danas: ' + res.tip : '';
     renderWeek($('done-week'), res.week);
     show('done');
     if (res.counts) fanfare();
